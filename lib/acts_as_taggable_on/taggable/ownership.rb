@@ -32,7 +32,7 @@ module ActsAsTaggableOn::Taggable
         scope = base_tags
       else
         scope = base_tags.where(
-          "#{ActsAsTaggableOn::Tagging.quoted_table_name}" => {
+          "#{ActsAsTaggableOn::Tagging.table_name}" => {
             tagger_id: owner.id,
             tagger_type: owner.class.base_class.to_s
           }
@@ -50,7 +50,7 @@ module ActsAsTaggableOn::Taggable
 
     def owner_tags_on(owner, context)
       owner_tags(owner).where(
-        "#{ActsAsTaggableOn::Tagging.quoted_table_name}" => {
+        "#{ActsAsTaggableOn::Tagging.table_name}" => {
           context: context
         }
       )

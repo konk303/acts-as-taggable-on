@@ -672,15 +672,15 @@ describe 'Taggable' do
       # NOTE: type column supports an STI Tag subclass in the test suite, though
       # isn't included by default in the migration generator
       expect(@taggable.grouped_column_names_for(ActsAsTaggableOn::Tag))
-      .to eq('tags.id, tags.name, tags.taggings_count, tags.type')
+      .to eq('"tags".id, "tags".name, "tags".taggings_count, "tags".type')
     end
 
     it 'should return all column names joined for TaggableModel GROUP clause' do
-      expect(@taggable.grouped_column_names_for(TaggableModel)).to eq('taggable_models.id, taggable_models.name, taggable_models.type')
+      expect(@taggable.grouped_column_names_for(TaggableModel)).to eq('"taggable_models".id, "taggable_models".name, "taggable_models".type')
     end
 
     it 'should return all column names joined for NonStandardIdTaggableModel GROUP clause' do
-      expect(@taggable.grouped_column_names_for(TaggableModel)).to eq("taggable_models.#{TaggableModel.primary_key}, taggable_models.name, taggable_models.type")
+      expect(@taggable.grouped_column_names_for(TaggableModel)).to eq("\"taggable_models\".#{TaggableModel.primary_key}, \"taggable_models\".name, \"taggable_models\".type")
     end
   end
 
