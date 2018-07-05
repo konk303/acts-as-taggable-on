@@ -49,7 +49,7 @@ module ActsAsTaggableOn::Taggable::TaggedWithQuery
     def order_conditions
       order_by = []
       if options[:order_by_matching_tag_count].present?
-        order_by << "(SELECT count(*) FROM #{tagging_model.table_name} WHERE #{at_least_one_tag.to_sql}) desc"
+        order_by << "(SELECT count(*) FROM #{tagging_model.quoted_table_name} WHERE #{at_least_one_tag.to_sql}) desc"
       end
 
       order_by << options[:order] if options[:order].present?

@@ -32,7 +32,7 @@ module ActsAsTaggableOn::Taggable
         scope = base_tags
       else
         scope = base_tags.where(
-          "#{ActsAsTaggableOn::Tagging.table_name}" => {
+          "#{ActsAsTaggableOn::Tagging.quoted_table_name}" => {
             tagger_id: owner.id,
             tagger_type: owner.class.base_class.to_s
           }
@@ -42,7 +42,7 @@ module ActsAsTaggableOn::Taggable
       # when preserving tag order, return tags in created order
       # if we added the order to the association this would always apply
       if self.class.preserve_tag_order?
-        scope.order("#{ActsAsTaggableOn::Tagging.table_name}.id")
+        scope.order("#{ActsAsTaggableOn::Tagging.quoted_table_name}.id")
       else
         scope
       end
@@ -50,7 +50,7 @@ module ActsAsTaggableOn::Taggable
 
     def owner_tags_on(owner, context)
       owner_tags(owner).where(
-        "#{ActsAsTaggableOn::Tagging.table_name}" => {
+        "#{ActsAsTaggableOn::Tagging.quoted_table_name}" => {
           context: context
         }
       )

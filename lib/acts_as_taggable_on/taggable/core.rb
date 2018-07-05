@@ -21,7 +21,7 @@ module ActsAsTaggableOn::Taggable
           tag_type = tags_type.to_s.singularize
           context_taggings = "#{tag_type}_taggings".to_sym
           context_tags = tags_type.to_sym
-          taggings_order = (preserve_tag_order? ? "#{ActsAsTaggableOn::Tagging.table_name}.id" : [])
+          taggings_order = (preserve_tag_order? ? "#{ActsAsTaggableOn::Tagging.quoted_table_name}.id" : [])
 
           class_eval do
             # when preserving tag order, include order option so that for a 'tags' context
@@ -76,7 +76,7 @@ module ActsAsTaggableOn::Taggable
 
       # all column names are necessary for PostgreSQL group clause
       def grouped_column_names_for(object)
-        object.column_names.map { |column| "#{object.table_name}.#{column}" }.join(', ')
+        object.column_names.map { |column| "#{object.quoted_table_name}.#{column}" }.join(', ')
       end
 
       ##
@@ -171,7 +171,7 @@ module ActsAsTaggableOn::Taggable
     ##
     # Returns all tags of a given context
     def all_tags_on(context)
-      tagging_table_name = ActsAsTaggableOn::Tagging.table_name
+      tagging_table_name = ActsAsTaggableOn::Tagging.quoted_table_name
 
       opts = ["#{tagging_table_name}.context = ?", context.to_s]
       scope = base_tags.where(opts)
@@ -180,17 +180,17 @@ module ActsAsTaggableOn::Taggable
         group_columns = grouped_column_names_for(ActsAsTaggableOn::Tag)
         scope.order(Arel.sql("max(#{tagging_table_name}.created_at)")).group(group_columns)
       else
-        scope.group("#{ActsAsTaggableOn::Tag.table_name}.#{ActsAsTaggableOn::Tag.primary_key}")
+        scope.group("#{ActsAsTaggableOn::Tag.quoted_table_name}.#{ActsAsTaggableOn::Tag.primary_key}")
       end.to_a
     end
 
     ##
     # Returns all tags that are not owned of a given context
     def tags_on(context)
-      scope = base_tags.where(["#{ActsAsTaggableOn::Tagging.table_name}.context = ? AND #{ActsAsTaggableOn::Tagging.table_name}.tagger_id IS NULL", context.to_s])
+      scope = base_tags.where(["#{ActsAsTaggableOn::Tagging.quoted_table_name}.context = ? AND #{ActsAsTaggableOn::Tagging.quoted_table_name}.tagger_id IS NULL", context.to_s])
       # when preserving tag order, return tags in created order
       # if we added the order to the association this would always apply
-      scope = scope.order("#{ActsAsTaggableOn::Tagging.table_name}.id") if self.class.preserve_tag_order?
+      scope = scope.order("#{ActsAsTaggableOn::Tagging.quoted_table_name}.id") if self.class.preserve_tag_order?
       scope
     end
 
